@@ -45,6 +45,9 @@ extern "C"
     int circ_queue_push(circ_queue_t *queue, const void *element, int full_remove_oldest);
     int circ_queue_pop(circ_queue_t *queue, void *element);
 
+    void* circ_queue_front(circ_queue_t *queue);
+    void* circ_queue_back(circ_queue_t *queue);
+
     int circ_queue_is_full(circ_queue_t *queue);
     int circ_queue_is_empty(circ_queue_t *queue);
 

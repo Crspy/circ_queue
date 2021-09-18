@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <iostream>
 #include "circ_queue.h"
+#include <array>
 
 TEST(circ_queue_test, create_and_destroy)
 {
@@ -41,7 +42,6 @@ TEST(circ_queue_test, overflow_on_push_full)
   const auto queue_capacity = 5;
   circ_queue_t *queue = circ_queue_create(queue_capacity, sizeof(int));
 
-
   int elem = 55;
   for (size_t i = 0; i < queue_capacity; ++i)
   {
@@ -64,12 +64,18 @@ TEST(circ_queue_test, push_pop)
 
   const auto queue_capacity = 5;
   circ_queue_t *queue = circ_queue_create(queue_capacity, sizeof(int));
+  ASSERT_EQ(circ_queue_front(queue), nullptr);
+  ASSERT_EQ(circ_queue_back(queue), nullptr);
 
   int elem = 55;
   int popped_elem;
 
   ASSERT_EQ(circ_queue_push(queue, &elem, 0), 0);
   ASSERT_EQ(queue->length, 1);
+
+  // make sure front and back are the same
+  ASSERT_EQ(*(int *)circ_queue_front(queue), 55);
+  ASSERT_EQ(*(int *)circ_queue_back(queue), 55);
 
   ASSERT_EQ(circ_queue_pop(queue, &popped_elem), 0);
   ASSERT_EQ(popped_elem, elem);
@@ -83,6 +89,9 @@ TEST(circ_queue_test, push_pop)
     ASSERT_EQ(circ_queue_push(queue, &elem, 0), 0);
     elem++;
   }
+  // make sure front and back matches what we expect
+  ASSERT_EQ(*(int *)circ_queue_front(queue), 55);
+  ASSERT_EQ(*(int *)circ_queue_back(queue), elem - 1);
 
   // make sure that try to store more would cause overflow (return -1)
   // also length should stay the same (equal to capacity)
@@ -134,7 +143,7 @@ TEST(circ_queue_test, for_each_test)
     ASSERT_EQ(*element, arr[idx]);
   }
 
-  int arr2[] = {55 + 1, 57 + 1, 59 + 1, 66 + 1, 68 + 1, 71 + 1};
+  std::array<int, 6> arr2{55 + 1, 57 + 1, 59 + 1, 66 + 1, 68 + 1, 71 + 1};
   // should overflow
   for (auto e : arr2)
   {
@@ -153,6 +162,10 @@ TEST(circ_queue_test, for_each_test)
     fprintf(stderr, "idx:%d\n", idx);
     ASSERT_EQ(*element, arr2[idx]);
   }
+
+  // make sure front and back matches what we expect
+  ASSERT_EQ(*(int *)circ_queue_front(queue), arr2[0]);
+  ASSERT_EQ(*(int *)circ_queue_back(queue), arr2[arr2.size() - 1]);
 
   circ_queue_destroy(queue);
 }

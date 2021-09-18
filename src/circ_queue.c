@@ -114,6 +114,36 @@ int circ_queue_pop(circ_queue_t *queue, void *element)
 }
 
 /**
+ * @brief returns a pointer to the first/front element in the circular queue
+ * @param queue pointer to the circular queue.
+ * @return NULL if queue is empty , otherwise returns address to the first element
+ */
+void *circ_queue_front(circ_queue_t *queue)
+{
+    if (circ_queue_is_empty(queue))
+    {
+        return NULL;
+    }
+
+    return queue->data + (queue->element_size * queue->front);
+}
+
+/**
+ * @brief returns a pointer to the last element in the circular queue
+ * @param queue pointer to the circular queue.
+ * @return NULL if queue is empty , otherwise returns address to the last element
+ */
+void *circ_queue_back(circ_queue_t *queue)
+{
+    if (circ_queue_is_empty(queue))
+    {
+        return NULL;
+    }
+
+    return queue->data + (queue->element_size * (((queue->front + queue->length-1) % queue->capacity)));
+}
+
+/**
  * @brief checks if queue is full or not
  * @param queue pointer to the circular queue.
  * @return 0 if it's not full otherwise returns non zero value
