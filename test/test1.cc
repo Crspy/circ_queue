@@ -41,23 +41,16 @@ TEST(circ_queue_test, overflow_on_push_full)
   const auto queue_capacity = 5;
   circ_queue_t *queue = circ_queue_create(queue_capacity, sizeof(int));
 
-  int elem = 55;
-  ASSERT_EQ(circ_queue_push(queue, &elem, 0), 0);
-  ASSERT_EQ(queue->length, 1);
-  elem++;
-  ASSERT_EQ(circ_queue_push(queue, &elem, 0), 0);
-  ASSERT_EQ(queue->length, 2);
-  elem++;
-  ASSERT_EQ(circ_queue_push(queue, &elem, 0), 0);
-  ASSERT_EQ(queue->length, 3);
-  elem++;
-  ASSERT_EQ(circ_queue_push(queue, &elem, 0), 0);
-  ASSERT_EQ(queue->length, 4);
-  elem++;
-  ASSERT_EQ(circ_queue_push(queue, &elem, 0), 0);
-  ASSERT_EQ(queue->length, 5);
 
-  elem++;
+  int elem = 55;
+  for (size_t i = 0; i < queue_capacity; ++i)
+  {
+    ASSERT_EQ(queue->length, i);
+    ASSERT_EQ(circ_queue_push(queue, &elem, 0), 0);
+    elem++;
+  }
+
+  // pushing more elements would result in overflow (return -1)
   ASSERT_EQ(circ_queue_push(queue, &elem, 0), -1);
   ASSERT_EQ(queue->length, 5);
   ASSERT_EQ(circ_queue_push(queue, &elem, 0), -1);
